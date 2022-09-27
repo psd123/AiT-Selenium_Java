@@ -2,14 +2,14 @@ import com.github.javafaker.Faker;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
 import java.time.Duration;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
+import static org.junit.Assert.*;
 
 public class Methods {
     //add faker for methods
@@ -75,5 +75,35 @@ public class Methods {
         driver.findElement(By.id("createRoom")).click();
     }
 
+    //Book a room
+    public static void bookRoom(WebDriver driver) {
+        //Click the Book room button
+        driver.findElement(By.cssSelector("[class='btn btn-outline-primary float-right openBooking']")).click();
+        //Select today's date plus tomorrow with a left mouse click drag
+        WebElement startDate = driver.findElement(By.cssSelector("[class='rbc-date-cell rbc-now rbc-current']"));
+        //Drag and release to tomorrow
+        Actions action = new Actions(driver);
+        action.clickAndHold(startDate).pause(Duration.ofSeconds(2))
+                .moveByOffset(0,10)
+                .moveByOffset(50, 0)
+                .release().build().perform();
+        //Create and enter Customer details
+        String firstName = faker.name().firstName();
+        String lastName = faker.name().lastName();
+        String email = firstName+lastName+"@gmail.com";
+        String phone = faker.phoneNumber().phoneNumber();
 
+        driver.findElement(By.cssSelector("[name='firstname']")).sendKeys(firstName);
+        driver.findElement(By.cssSelector("[name='lastname']")).sendKeys(lastName);
+        driver.findElement(By.cssSelector("[name='email']")).sendKeys(email);
+        driver.findElement(By.cssSelector("[name='phone']")).sendKeys(phone);
+        //Click the Book button
+        driver.findElement(By.cssSelector("[class='btn btn-outline-primary float-right book-room']")).click();
+        //Confirm success pop up
+        new WebDriverWait(driver, Duration.ofSeconds(2)).until(ExpectedConditions.elementToBeClickable((By.cssSelector("[class='ReactModal__Content ReactModal__Content--after-open confirmation-modal']"))));
+        assertTrue(driver.findElement(By.cssSelector("[class='ReactModal__Content ReactModal__Content--after-open confirmation-modal']")).isDisplayed());
+        //could check pop up text
+        //Close success pop up
+        driver.findElement(By.cssSelector("[class='btn btn-outline-primary']")).click();
+    }
 }
