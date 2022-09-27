@@ -45,13 +45,7 @@ public class Browse {
         driver.findElement(By.id("submitContact")).click();
 
         //Load admin portal
-        Methods.createRoom(driver);
-        //Methods.adminLogin(driver);
-//        driver.navigate().to("https://automationintesting.online/#/admin");
-//        //Login to admin page
-//        driver.findElement(By.id("username")).sendKeys("admin");
-//        driver.findElement(By.id("password")).sendKeys("password");
-//        driver.findElement(By.id("doLogin")).click();
+        Methods.adminLogin(driver);
         //Click the inbox icon
         new WebDriverWait(driver, Duration.ofSeconds(2) ).until(ExpectedConditions.elementToBeClickable((By.cssSelector("i[class='fa fa-inbox'")))).click();
         //Check for the messages
